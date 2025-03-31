@@ -1,0 +1,45 @@
+{
+  "app": {
+    "title": "Todo App"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "username": "Username",
+    "password": "Password",
+    "loginError": "Invalid username or password"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "toggle": "Toggle Theme"
+  },
+  "language": {
+    "en": "English",
+    "uk": "Ukrainian",
+    "select": "Select Language"
+  },
+  "todo": {
+    "add": "Add Todo",
+    "edit": "Edit Todo",
+    "delete": "Delete",
+    "title": "Title",
+    "description": "Description",
+    "priority": "Priority",
+    "status": "Status",
+    "createdAt": "Created",
+    "save": "Save",
+    "cancel": "Cancel",
+    "emptyList": "No todos found. Add your first todo!"
+  },
+  "priority": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High"
+  },
+  "status": {
+    "todo": "To Do",
+    "in-progress": "In Progress",
+    "done": "Done"
+  }
+}
