@@ -104,7 +104,7 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
 
         <Grid
           container
-          spacing={2}
+          gap={2}
           alignItems="center"
           direction={isMobile || isTablet ? "column" : "row"}
         >
