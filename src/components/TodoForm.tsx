@@ -16,7 +16,8 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { Priority } from "../types";
-import { useTodo } from "../hooks/useTodo";
+import { useAppDispatch, useAppSelector } from "../hooks/reduxHooks";
+import { addTodo } from "../store/slices/todoSlice";
 
 interface TodoFormProps {
   open: boolean;
@@ -25,7 +26,8 @@ interface TodoFormProps {
 
 export const TodoForm = ({ open, onClose }: TodoFormProps) => {
   const { t } = useTranslation();
-  const { addTodo } = useTodo();
+  const dispatch = useAppDispatch();
+  const currentUser = useAppSelector((state) => state.auth.currentUser);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<Priority>("medium");
@@ -33,8 +35,15 @@ export const TodoForm = ({ open, onClose }: TodoFormProps) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleSubmit = () => {
-    if (title.trim()) {
-      addTodo(title, description, priority);
+    if (title.trim() && currentUser) {
+      dispatch(
+        addTodo({
+          title,
+          description,
+          priority,
+          userId: currentUser.id,
+        }),
+      );
       resetForm();
       onClose();
     }

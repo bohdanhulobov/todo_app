@@ -23,16 +23,20 @@ import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "../hooks/useTheme";
-import { useLanguage } from "../hooks/useLanguage";
-import { useAuth } from "../hooks/useAuth";
+import { useAppSelector, useAppDispatch } from "../hooks/reduxHooks";
+import { toggleTheme } from "../store/slices/themeSlice";
+import { setLanguage } from "../store/slices/languageSlice";
+import { logout } from "../store/slices/authSlice";
 import { Language } from "../types";
 
 export const Header = () => {
   const { t } = useTranslation();
-  const { currentTheme, toggleTheme } = useTheme();
-  const { currentLanguage, setLanguage } = useLanguage();
-  const { isAuthenticated, logout } = useAuth();
+  const dispatch = useAppDispatch();
+  const currentTheme = useAppSelector((state) => state.theme.currentTheme);
+  const currentLanguage = useAppSelector(
+    (state) => state.language.currentLanguage,
+  );
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const muiTheme = useMuiTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down("sm"));
 
@@ -49,14 +53,18 @@ export const Header = () => {
   };
 
   const handleLanguageChange = (language: Language) => {
-    setLanguage(language);
+    dispatch(setLanguage(language));
     handleLanguageMenuClose();
     setMobileMenuOpen(false);
   };
 
   const handleLogout = () => {
-    logout();
+    dispatch(logout());
     setMobileMenuOpen(false);
+  };
+
+  const handleToggleTheme = () => {
+    dispatch(toggleTheme());
   };
 
   const toggleMobileMenu = () => {
@@ -91,7 +99,7 @@ export const Header = () => {
               <Box sx={{ width: 250 }} role="presentation">
                 <List>
                   <ListItem disablePadding>
-                    <ListItemButton onClick={toggleTheme}>
+                    <ListItemButton onClick={handleToggleTheme}>
                       <ListItemIcon>
                         {currentTheme === "dark" ? (
                           <Brightness7Icon />
@@ -146,7 +154,11 @@ export const Header = () => {
           </>
         ) : (
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <IconButton color="inherit" onClick={toggleTheme} sx={{ ml: 1 }}>
+            <IconButton
+              color="inherit"
+              onClick={handleToggleTheme}
+              sx={{ ml: 1 }}
+            >
               {currentTheme === "dark" ? (
                 <Brightness7Icon />
               ) : (
@@ -181,7 +193,7 @@ export const Header = () => {
             </Menu>
 
             {isAuthenticated && (
-              <Button color="inherit" onClick={logout} sx={{ ml: 1 }}>
+              <Button color="inherit" onClick={handleLogout} sx={{ ml: 1 }}>
                 {t("auth.logout")}
               </Button>
             )}

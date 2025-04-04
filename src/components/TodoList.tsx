@@ -12,11 +12,11 @@ import AddIcon from "@mui/icons-material/Add";
 import { useTranslation } from "react-i18next";
 import { TodoItem } from "./TodoItem";
 import { TodoForm } from "./TodoForm";
-import { useTodo } from "../hooks/useTodo";
+import { useAppSelector } from "../hooks/reduxHooks";
 
 export const TodoList = () => {
   const { t } = useTranslation();
-  const { todos } = useTodo();
+  const todos = useAppSelector((state) => state.todo.todos);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));

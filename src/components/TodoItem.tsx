@@ -16,7 +16,12 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useTranslation } from "react-i18next";
 import { Todo, Priority, Status } from "../types";
-import { useTodo } from "../hooks/useTodo";
+import { useAppDispatch, useAppSelector } from "../hooks/reduxHooks";
+import {
+  removeTodo,
+  updateTodoStatus,
+  updateTodoPriority,
+} from "../store/slices/todoSlice";
 import { getPriorityColor, getStatusColor } from "../utils/todo-utils";
 
 interface TodoItemProps {
@@ -25,10 +30,33 @@ interface TodoItemProps {
 
 export const TodoItem = ({ todo }: TodoItemProps) => {
   const { t } = useTranslation();
-  const { removeTodo, updateTodoStatus, updateTodoPriority } = useTodo();
+  const dispatch = useAppDispatch();
+  const currentUser = useAppSelector((state) => state.auth.currentUser);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
+  const handleRemoveTodo = () => {
+    if (currentUser) {
+      dispatch(removeTodo({ id: todo.id, userId: currentUser.id }));
+    }
+  };
+
+  const handleStatusChange = (status: Status) => {
+    if (currentUser) {
+      dispatch(
+        updateTodoStatus({ id: todo.id, status, userId: currentUser.id }),
+      );
+    }
+  };
+
+  const handlePriorityChange = (priority: Priority) => {
+    if (currentUser) {
+      dispatch(
+        updateTodoPriority({ id: todo.id, priority, userId: currentUser.id }),
+      );
+    }
+  };
 
   return (
     <Card sx={{ mb: 2, position: "relative" }}>
@@ -55,7 +83,7 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
           <IconButton
             size="small"
             color="error"
-            onClick={() => removeTodo(todo.id)}
+            onClick={handleRemoveTodo}
             sx={{ alignSelf: isMobile ? "flex-end" : "center" }}
           >
             <DeleteIcon />
@@ -122,7 +150,7 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
                   value={todo.priority}
                   label={t("todo.priority")}
                   onChange={(e) =>
-                    updateTodoPriority(todo.id, e.target.value as Priority)
+                    handlePriorityChange(e.target.value as Priority)
                   }
                   size="small"
                 >
@@ -141,9 +169,7 @@ export const TodoItem = ({ todo }: TodoItemProps) => {
                   labelId="status-label"
                   value={todo.status}
                   label={t("todo.status")}
-                  onChange={(e) =>
-                    updateTodoStatus(todo.id, e.target.value as Status)
-                  }
+                  onChange={(e) => handleStatusChange(e.target.value as Status)}
                   size="small"
                 >
                   <MenuItem value="todo">{t("status.todo")}</MenuItem>

@@ -11,11 +11,12 @@ import {
   useTheme,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../hooks/useAuth";
+import { useAppDispatch } from "../hooks/reduxHooks";
+import { login } from "../store/slices/authSlice";
 
 export const Login = () => {
   const { t } = useTranslation();
-  const { login } = useAuth();
+  const dispatch = useAppDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
@@ -24,8 +25,18 @@ export const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const success = login(username, password);
-    if (!success) {
+
+    try {
+      dispatch(login({ username, password }));
+      // Check if login was successful by seeing if we have a current user
+      const currentUser = JSON.parse(
+        localStorage.getItem("currentUser") || "null",
+      );
+      if (!currentUser) {
+        setError(true);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
       setError(true);
     }
   };
